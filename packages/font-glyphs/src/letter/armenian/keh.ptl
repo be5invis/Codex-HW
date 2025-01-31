@@ -19,15 +19,23 @@ glyph-block Letter-Armenian-Keh : begin
 		create-glyph 'armn/Keh' 0x554 : glyph-proc
 			local df : include : DivFrame 1
 			include : df.markSet.capital
-			local bot : Math.max (XH - (CAP - XH)) (2.2 * df.mvs)
+			local ostroke : OverlayStroke * (df.mvs / Stroke)
+			local bot : CAP * HBarPos - df.mvs / 2
 			include : OBarLeft.roundedTop
-				top -- CAP
-				bot -- bot
-				left -- df.leftSB
+				top   -- CAP
+				bot   -- bot
+				left  -- df.leftSB
 				right -- df.rightSB
+				sw    -- df.mvs
+				fine  -- df.shoulderFine
+				ada   -- ArchDepthA
+				adb   -- ArchDepthB
 				yTerminal -- 0
-				sw -- df.mvs
-			include : HBar.m (df.leftSB - jut + [HSwToV : 0.5 * df.mvs]) (df.rightSB) [mix [if SLAB df.mvs 0] bot 0.5] df.mvs
+			include : HBar.m
+				df.leftSB - jut + [HSwToV : 0.5 * df.mvs]
+				df.rightSB + 0
+				mix [if SLAB df.mvs 0] bot 0.5
+				Math.min ostroke : 0.5 * (bot - [if SLAB df.mvs 0])
 			if SLAB : begin
 				local sf : SerifFrame.fromDf df CAP 0
 				include sf.lb.full
@@ -35,16 +43,23 @@ glyph-block Letter-Armenian-Keh : begin
 		create-glyph 'armn/keh' 0x584 : glyph-proc
 			local df : include : DivFrame 1
 			include : df.markSet.p
-			local ostroke : df.adviceStroke 3.75
-			local bot : Math.max (0.1 * XH) (1 * ostroke)
+			local ostroke : OverlayStroke * (df.mvs / Stroke)
+			local bot : Math.max (0.1 * XH) (1.5 * ostroke)
 			include : OBarLeft.shape
+				top   -- XH
+				bot   -- bot
 				left  -- df.leftSB
 				right -- df.rightSB
-				bot   -- bot
 				sw    -- df.mvs
 				fine  -- df.shoulderFine
+				ada   -- SmallArchDepthA
+				adb   -- SmallArchDepthB
 			include : VBar.l df.leftSB Descender XH df.mvs
-			include : HCrossBar (df.leftSB - jut + [HSwToV : 0.5 * df.mvs]) df.rightSB 0 ostroke
+			include : HBar.b
+				df.leftSB - jut + [HSwToV : 0.5 * df.mvs]
+				df.rightSB + 0
+				XH - highBarPos
+				1 * ostroke
 			if SLAB : begin
 				local sf : SerifFrame.fromDf df XH Descender
 				include : composite-proc sf.lt.outer sf.lb.fullSide
